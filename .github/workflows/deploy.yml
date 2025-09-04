@@ -36,7 +36,8 @@ jobs:
           gcloud run deploy mern-pipeline-app \
             --source . \
             --region us-central1 \
-            --allow-unauthenticated
+            --allow-unauthenticated \
+            --set-env-vars NODE_ENV=production
 
       # Step 6: Get deployed service URL
       - name: Print Cloud Run URL

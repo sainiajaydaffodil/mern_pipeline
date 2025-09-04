@@ -25,10 +25,11 @@ jobs:
       # Step 3: Deploy to Cloud Run
       - name: Deploy to Cloud Run
         run: |
-          gcloud run deploy mern-pipeline-app \   # Name of your service
-            --source . \                          # Build from repo source
-            --region us-central1 \                # GCP region
-            --allow-unauthenticated               # Public URL
+          gcloud run deploy mern-pipeline-app \
+            --source . \
+            --region us-central1 \
+            --allow-unauthenticated
+
 
       # Optional: Step 4: Verify deployment
       - name: Verify deployment

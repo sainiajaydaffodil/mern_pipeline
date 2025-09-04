@@ -1,10 +1,9 @@
 name: Deploy MERN App to Cloud Run
 
-# Trigger only on prod branch pushes
 on:
   push:
     branches:
-      - main   # Only deploy when main branch is updated
+      - main  # deploy only on main branch
 
 jobs:
   deploy:
@@ -12,22 +11,26 @@ jobs:
 
     steps:
       # Step 1: Checkout code
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Set up Google Cloud CLI and authenticate with service account
+      # Step 2: Authenticate to GCP using service account
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      # Step 3: Set up gcloud CLI
       - name: Set up gcloud CLI
         uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: mern-pipeline-prod
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true   # <--- This is REQUIRED
 
-      # Step 3: Debug authenticated account (optional, for testing)
+      # Step 4: Optional – Debug active account
       - name: Show active gcloud account
         run: gcloud auth list
 
-      # Step 4: Deploy to Cloud Run
+      # Step 5: Deploy to Cloud Run
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy mern-pipeline-app \
@@ -35,10 +38,9 @@ jobs:
             --region us-central1 \
             --allow-unauthenticated
 
-      # Step 5: Print the deployed URL
-      - name: Get Cloud Run URL
+      # Step 6: Get deployed service URL
+      - name: Print Cloud Run URL
         run: |
-          echo "Deployed URL:"
           gcloud run services describe mern-pipeline-app \
             --region us-central1 \
             --format="value(status.url)"

@@ -1,4 +1,4 @@
 module.exports = {
   PORT: 8080,
-  MESSAGE: "Hello Production World!"
+  MESSAGE: "Hello Production World Updated!"
 };

@@ -1,0 +1,49 @@
+name: Deploy MERN App to Cloud Run
+
+# Trigger only on prod branch pushes
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout your code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Google Cloud CLI
+      - name: Set up gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: mern-pipeline-prod          # Your GCP project ID
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+
+      # Step 3: Deploy to Cloud Run
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy mern-pipeline-app \   # Name of your service
+            --source . \                          # Build from repo source
+            --region us-central1 \                # GCP region
+            --allow-unauthenticated               # Public URL
+
+      # Optional: Step 4: Verify deployment
+      - name: Verify deployment
+        run: |
+          gcloud run services describe mern-pipeline-app --region us-central1 --format="value(status.url)"  # Get service URL 
+          echo "Application deployed successfully!"
+
+      # Optional: Step 5: Post-deployment tests (if any)
+      # - name: Run post-deployment tests
+      #   run: |
+      #     # Add commands to run tests against the deployed application here
+
+
+
+      # Optional: Step 6: Notify team (e.g., via Slack or email)
+      # - name: Notify team
+      #   run: |
+      #     # Add commands to send notifications here           
